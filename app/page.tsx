@@ -5,9 +5,6 @@ export default function Home() {
         margin: 0,
         minHeight: "100vh",
         backgroundColor: "#f6f3ef",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
       }}
     >
       <img
@@ -16,8 +13,6 @@ export default function Home() {
         style={{
           width: "100%",
           height: "auto",
-          maxHeight: "100vh",
-          objectFit: "contain",
           display: "block",
         }}
       />
