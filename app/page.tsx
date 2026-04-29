@@ -20,173 +20,168 @@ export default function Home() {
 
   const sendWhatsapp = () => {
     const message = encodeURIComponent(
-      `Merhaba, randevu talebi oluşturmak istiyorum.\n\nAd Soyad: ${name}\nCep Telefonu: ${phone}\nRandevu Tarihi: ${date}\n\nİletişim: +90 533 220 20 10`
+      `Merhaba, randevu talebi oluşturmak istiyorum.\n\nAd Soyad: ${name}\nCep: ${phone}\nTarih: ${date}\n\nİletişim: +90 533 220 20 10`
     );
 
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
   };
 
   return (
-    <main style={{ margin: 0, fontFamily: "Arial, sans-serif", background: "#f6f8fb", color: "#102a43" }}>
+    <main>
       <style>{`
-        * { box-sizing: border-box; }
-        body { margin: 0; }
+        html { scroll-behavior: smooth; }
+        body { margin: 0; font-family: Arial; background:#f6f8fb; }
 
-        .hero img { width: 100%; height: auto; display: block; }
-
-        .intro {
-          padding: 44px 22px 20px;
-          text-align: center;
+        /* NAVBAR */
+        .nav {
+          position: fixed;
+          top: 0;
+          width: 100%;
+          z-index: 1000;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 14px 24px;
+          background: rgba(255,255,255,0.85);
+          backdrop-filter: blur(10px);
+          border-bottom: 1px solid #eee;
         }
 
-        .intro small {
-          color: #008fa3;
-          font-weight: 800;
-          letter-spacing: 3px;
-          text-transform: uppercase;
+        .nav h2 {
+          margin: 0;
+          font-size: 20px;
         }
 
-        .intro h1 {
-          margin: 14px 0 10px;
-          font-size: clamp(34px, 6vw, 58px);
+        .menu {
+          display: flex;
+          gap: 18px;
         }
 
-        .intro p {
-          max-width: 760px;
-          margin: 0 auto;
-          color: #5b6b7a;
-          font-size: 18px;
-          line-height: 1.6;
+        .menu a {
+          text-decoration: none;
+          color: #102a43;
+          font-weight: 600;
+        }
+
+        .menu a:hover {
+          color: #00a8b8;
+        }
+
+        /* HERO */
+        .hero img {
+          width: 100%;
+          margin-top: 60px;
         }
 
         .section {
-          max-width: 1050px;
-          margin: 45px auto;
-          padding: 0 22px;
+          max-width: 1000px;
+          margin: 60px auto;
+          padding: 0 20px;
         }
 
         .box {
           background: white;
-          border-radius: 28px;
-          padding: 34px;
-          box-shadow: 0 18px 45px rgba(16,42,67,.09);
+          padding: 30px;
+          border-radius: 24px;
+          box-shadow: 0 15px 40px rgba(0,0,0,0.05);
         }
 
         input {
           width: 100%;
-          padding: 16px;
-          border-radius: 14px;
-          border: 1px solid #d9e2ec;
-          font-size: 16px;
-          margin-bottom: 14px;
+          padding: 15px;
+          border-radius: 12px;
+          border: 1px solid #ddd;
+          margin-bottom: 12px;
         }
 
         button {
           width: 100%;
-          padding: 17px;
+          padding: 16px;
           border: none;
-          border-radius: 14px;
+          border-radius: 12px;
           background: #00a8b8;
           color: white;
-          font-size: 17px;
-          font-weight: 800;
+          font-weight: bold;
           cursor: pointer;
         }
 
-        .video {
+        iframe {
           width: 100%;
-          aspect-ratio: 16 / 9;
-          border: 0;
-          border-radius: 22px;
-          overflow: hidden;
+          border-radius: 20px;
         }
 
-        .news-frame {
-          width: 100%;
-          height: 620px;
-          border: 1px solid #d9e2ec;
-          border-radius: 22px;
-          background: white;
-        }
-
-        h2 { font-size: 32px; margin-top: 0; }
-        h3 { font-size: 24px; }
-
-        @media (max-width: 768px) {
-          .box { padding: 24px; border-radius: 22px; }
-          .news-frame { height: 520px; }
+        @media(max-width:768px){
+          .menu { display:none; } /* mobilde sade olsun */
         }
       `}</style>
 
-      <section className="hero">
-        <img src="/hero.jpg" alt="Areteus Sağlık - Prof. Dr. M. Temel Yılmaz" />
-      </section>
+      {/* NAVBAR */}
+      <div className="nav">
+        <h2>Areteus Sağlık</h2>
+        <div className="menu">
+          <a href="#hakkinda">Hakkında</a>
+          <a href="#randevu">Randevu</a>
+          <a href="#basin">Basında Biz</a>
+          <a href="#haber">Haber</a>
+        </div>
+      </div>
 
-      <section className="intro">
-        <small>Areteus Sağlık</small>
-        <h1>Prof. Dr. Mehmet Temel Yılmaz</h1>
-        <p>
-          İç Hastalıkları, Endokrinoloji, Diyabet ve Metabolizma Hastalıkları alanında
-          akademik ve klinik deneyim.
-        </p>
-      </section>
+      {/* HERO */}
+      <div className="hero">
+        <img src="/hero.jpg" />
+      </div>
 
-      <section className="section" id="randevu">
+      {/* HAKKINDA */}
+      <div className="section" id="hakkinda">
+        <div className="box">
+          <h2>Hakkında</h2>
+          <p>
+            Prof. Dr. Mehmet Temel Yılmaz, Endokrinoloji ve Diyabet alanında uzun yıllara dayanan akademik ve klinik deneyime sahiptir.
+          </p>
+        </div>
+      </div>
+
+      {/* RANDEVU */}
+      <div className="section" id="randevu">
         <div className="box">
           <h2>Randevu Talebi</h2>
 
-          <input
-            placeholder="Ad Soyad"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-
-          <input
-            placeholder="Cep 0(xxx) xxx xx xx"
-            value={phone}
-            onChange={(e) => setPhone(formatPhone(e.target.value))}
-          />
-
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
+          <input placeholder="Ad Soyad" value={name} onChange={(e)=>setName(e.target.value)} />
+          <input placeholder="Cep 0(xxx) xxx xx xx" value={phone} onChange={(e)=>setPhone(formatPhone(e.target.value))} />
+          <input type="date" value={date} onChange={(e)=>setDate(e.target.value)} />
 
           <button onClick={sendWhatsapp}>
             WhatsApp ile Randevu Talebi Gönder
           </button>
         </div>
-      </section>
+      </div>
 
-      <section className="section">
+      {/* BASINDA BİZ */}
+      <div className="section" id="basin">
         <div className="box">
           <h2>Basında Biz</h2>
-          <h3>Prof. Dr. Temel Yılmaz: İnsülinin keşfi kadar büyük bir başarı</h3>
+          <h3>İnsülinin keşfi kadar büyük başarı</h3>
 
           <iframe
-            className="video"
+            height="400"
             src="https://www.youtube.com/embed/Jx0Ew7GvLdw"
-            title="Prof. Dr. Temel Yılmaz"
-            allowFullScreen
           />
         </div>
-      </section>
+      </div>
 
-      <section className="section">
+      {/* HABER */}
+      <div className="section" id="haber">
         <div className="box">
           <h2>Haber</h2>
-          <h3>
-            Prof. Dr. Temel Yılmaz: Dördüncü doz aşıya ihtiyaç olduğunu gösteren bir çalışma yok
-          </h3>
+          <h3>Dördüncü doz aşı hakkında açıklama</h3>
 
           <iframe
-            className="news-frame"
+            height="500"
             src="https://t24.com.tr/koronavirus/prof-dr-temel-yilmaz-dorduncu-doz-asiya-ihtiyac-oldugunu-gosteren-bir-calisma-yok,972604"
-            title="T24 Haber"
           />
         </div>
-      </section>
+      </div>
+
     </main>
   );
 }
