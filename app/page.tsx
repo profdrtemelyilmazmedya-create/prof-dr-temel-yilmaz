@@ -76,7 +76,6 @@ const sections = [
     icon: "🎥",
     items: [
       "Prof. Dr. Temel Yılmaz: İnsülinin keşfi kadar büyük bir başarı",
-      "Dördüncü doz aşıya ihtiyaç olduğunu gösteren bir çalışma yok açıklaması",
     ],
   },
   {
@@ -104,21 +103,29 @@ export default function Home() {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 4200);
+
     return () => clearInterval(timer);
   }, []);
 
   const formatPhone = (value: string) => {
     const n = value.replace(/\D/g, "").replace(/^0/, "").slice(0, 10);
+
     if (n.length <= 3) return `0(${n}`;
     if (n.length <= 6) return `0(${n.slice(0, 3)}) ${n.slice(3)}`;
-    if (n.length <= 8) return `0(${n.slice(0, 3)}) ${n.slice(3, 6)} ${n.slice(6)}`;
-    return `0(${n.slice(0, 3)}) ${n.slice(3, 6)} ${n.slice(6, 8)} ${n.slice(8)}`;
+    if (n.length <= 8)
+      return `0(${n.slice(0, 3)}) ${n.slice(3, 6)} ${n.slice(6)}`;
+
+    return `0(${n.slice(0, 3)}) ${n.slice(3, 6)} ${n.slice(
+      6,
+      8
+    )} ${n.slice(8)}`;
   };
 
   const sendWhatsapp = () => {
     const message = encodeURIComponent(
       `📅 *Randevu Talebi*\n\n👤 *Ad Soyad:* ${name}\n📞 *Telefon:* ${phone}\n🗓 *Tarih:* ${date}\n\n📍 *Areteus Sağlık*\n☎️ +90 533 220 20 10`
     );
+
     window.open(`https://wa.me/905332202010?text=${message}`, "_blank");
   };
 
@@ -126,8 +133,15 @@ export default function Home() {
     <main>
       <style>{`
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: Arial, Helvetica, sans-serif; background:#f6f8fb; color:#102a43; }
+
         html { scroll-behavior: smooth; }
+
+        body {
+          margin: 0;
+          font-family: Arial, Helvetica, sans-serif;
+          background: #f6f8fb;
+          color: #102a43;
+        }
 
         .hero {
           position: relative;
@@ -207,7 +221,14 @@ export default function Home() {
           gap: 16px;
         }
 
+        .menuWrap {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+
         .menuCard {
+          min-height: 96px;
           border: 1px solid #dce8ee;
           background: white;
           border-radius: 22px;
@@ -224,6 +245,7 @@ export default function Home() {
         }
 
         .menuCard span {
+          min-width: 42px;
           width: 42px;
           height: 42px;
           border-radius: 14px;
@@ -239,6 +261,19 @@ export default function Home() {
           box-shadow: 0 16px 36px rgba(0,168,184,.18);
         }
 
+        .inlineBox {
+          background: white;
+          border-radius: 22px;
+          padding: 24px;
+          box-shadow: 0 14px 34px rgba(16,42,67,.08);
+          border: 1px solid #e4edf2;
+        }
+
+        .inlineBox h2 {
+          margin-top: 0;
+          font-size: 26px;
+        }
+
         .section {
           max-width: 1050px;
           margin: 38px auto;
@@ -252,7 +287,7 @@ export default function Home() {
           box-shadow: 0 18px 45px rgba(16,42,67,.09);
         }
 
-        .box h2 { margin-top:0; font-size:30px; }
+        .box h2 { margin-top: 0; font-size: 30px; }
 
         .list {
           margin: 0;
@@ -263,43 +298,46 @@ export default function Home() {
         }
 
         .form label {
-          display:block;
-          margin:16px 0 8px;
-          font-weight:800;
+          display: block;
+          margin: 16px 0 8px;
+          font-weight: 800;
         }
 
         input {
-          width:100%;
-          padding:16px;
-          border-radius:14px;
-          border:1px solid #d9e2ec;
-          font-size:16px;
+          width: 100%;
+          padding: 16px;
+          border-radius: 14px;
+          border: 1px solid #d9e2ec;
+          font-size: 16px;
         }
 
-        .primaryBtn, .mapBtn, .callBtn {
-          display:block;
-          width:100%;
-          margin-top:18px;
-          padding:17px;
-          border:none;
-          border-radius:14px;
-          color:white;
-          font-size:17px;
-          font-weight:800;
-          text-align:center;
-          text-decoration:none;
-          cursor:pointer;
+        .primaryBtn,
+        .mapBtn,
+        .callBtn {
+          display: block;
+          width: 100%;
+          margin-top: 18px;
+          padding: 17px;
+          border: none;
+          border-radius: 14px;
+          color: white;
+          font-size: 17px;
+          font-weight: 800;
+          text-align: center;
+          text-decoration: none;
+          cursor: pointer;
         }
 
-        .primaryBtn { background:#00a8b8; }
-        .mapBtn { background:#102a43; }
-        .callBtn { background:#18a558; }
+        .primaryBtn { background: #00a8b8; }
+        .mapBtn { background: #102a43; }
+        .callBtn { background: #18a558; }
 
         .video {
-          width:100%;
-          aspect-ratio:16/9;
-          border:0;
-          border-radius:22px;
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          border: 0;
+          border-radius: 22px;
+          margin-top: 20px;
         }
 
         @media (max-width: 768px) {
@@ -313,12 +351,14 @@ export default function Home() {
           }
 
           .menuCard {
+            min-height: 92px;
             padding: 18px;
             border-radius: 18px;
             font-size: 17px;
           }
 
-          .box {
+          .box,
+          .inlineBox {
             padding: 24px;
             border-radius: 22px;
           }
@@ -334,9 +374,13 @@ export default function Home() {
             className={`slide ${index === current ? "active" : ""}`}
           />
         ))}
+
         <div className="dots">
           {slides.map((_, index) => (
-            <span key={index} className={`dot ${index === current ? "active" : ""}`} />
+            <span
+              key={index}
+              className={`dot ${index === current ? "active" : ""}`}
+            />
           ))}
         </div>
       </section>
@@ -345,65 +389,65 @@ export default function Home() {
         <small>Areteus Sağlık</small>
         <h1>Prof. Dr. Mehmet Temel Yılmaz</h1>
         <p>
-          İç Hastalıkları, Endokrinoloji, Diyabet ve Metabolizma Hastalıkları alanında
-          akademik ve klinik deneyim.
+          İç Hastalıkları, Endokrinoloji, Diyabet ve Metabolizma Hastalıkları
+          alanında akademik ve klinik deneyim.
         </p>
       </section>
 
       <section className="menuGrid">
         {sections.map((section) => (
-          <button
-            key={section.title}
-            className={`menuCard ${open === section.title ? "active" : ""}`}
-            onClick={() => setOpen(open === section.title ? null : section.title)}
-          >
-            <span>{section.icon}</span>
-            {section.title}
-          </button>
-        ))}
-      </section>
+          <div key={section.title} className="menuWrap">
+            <button
+              className={`menuCard ${open === section.title ? "active" : ""}`}
+              onClick={() =>
+                setOpen(open === section.title ? null : section.title)
+              }
+            >
+              <span>{section.icon}</span>
+              {section.title}
+            </button>
 
-      {sections.map((section) =>
-        open === section.title ? (
-          <section className="section" key={section.title}>
-            <div className="box">
-              <h2>{section.title}</h2>
-              <ul className="list">
-                {section.items.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            {open === section.title && (
+              <div className="inlineBox">
+                <h2>{section.title}</h2>
 
-              {section.title === "Basında Biz" && (
-                <div style={{ marginTop: 22 }}>
+                <ul className="list">
+                  {section.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+
+                {section.title === "Basında Biz" && (
                   <iframe
                     className="video"
                     src="https://www.youtube.com/embed/Jx0Ew7GvLdw"
                     title="Prof. Dr. Temel Yılmaz"
                     allowFullScreen
                   />
-                </div>
-              )}
+                )}
 
-              {section.title === "İletişim" && (
-                <>
-                  <a
-                    className="mapBtn"
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`}
-                    target="_blank"
-                  >
-                    Google Maps ile Yol Tarifi Al
-                  </a>
+                {section.title === "İletişim" && (
+                  <>
+                    <a
+                      className="mapBtn"
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        address
+                      )}`}
+                      target="_blank"
+                    >
+                      Google Maps ile Yol Tarifi Al
+                    </a>
 
-                  <a className="callBtn" href="tel:+905332202010">
-                    WhatsApp / Telefon: +90 533 220 20 10
-                  </a>
-                </>
-              )}
-            </div>
-          </section>
-        ) : null
-      )}
+                    <a className="callBtn" href="tel:+905332202010">
+                      WhatsApp / Telefon: +90 533 220 20 10
+                    </a>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </section>
 
       <section className="section">
         <div className="box">
