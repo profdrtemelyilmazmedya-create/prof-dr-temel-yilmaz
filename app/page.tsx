@@ -1,179 +1,353 @@
 "use client";
+
 import { useEffect, useState } from "react";
 
+const slides = ["/hero.jpg", "/slide-1.jpg", "/slide-2.jpg", "/slide-3.jpg"];
+
 export default function Home() {
-  const slides = ["/hero.jpg", "/slide-1.jpg", "/slide-2.jpg", "/slide-3.jpg"];
   const [current, setCurrent] = useState(0);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [date, setDate] = useState("");
+
+  const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 4000);
-    return () => clearInterval(interval);
+
+    return () => clearInterval(timer);
   }, []);
 
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    date: "",
-  });
-
   const formatPhone = (value: string) => {
-    let numbers = value.replace(/\D/g, "");
-    numbers = numbers.substring(0, 10);
+    const n = value.replace(/\D/g, "").replace(/^0/, "").slice(0, 10);
 
-    let formatted = "0";
-    if (numbers.length > 0) formatted += "(" + numbers.substring(0, 3);
-    if (numbers.length >= 3) formatted += ") " + numbers.substring(3, 6);
-    if (numbers.length >= 6) formatted += " " + numbers.substring(6, 8);
-    if (numbers.length >= 8) formatted += " " + numbers.substring(8, 10);
+    if (n.length <= 3) return `0(${n}`;
+    if (n.length <= 6) return `0(${n.slice(0, 3)}) ${n.slice(3)}`;
+    if (n.length <= 8)
+      return `0(${n.slice(0, 3)}) ${n.slice(3, 6)} ${n.slice(6)}`;
 
-    return formatted;
+    return `0(${n.slice(0, 3)}) ${n.slice(3, 6)} ${n.slice(
+      6,
+      8
+    )} ${n.slice(8)}`;
   };
 
-  const sendWhatsApp = () => {
-    const message =
-      `📅 *Randevu Talebi*\n\n` +
-      `👤 *Ad Soyad:* ${form.name}\n` +
-      `📞 *Telefon:* ${form.phone}\n` +
-      `🗓 *Tarih:* ${form.date}`;
-
-    window.open(
-      `https://wa.me/905332202010?text=${encodeURIComponent(message)}`
+  const sendWhatsapp = () => {
+    const message = encodeURIComponent(
+      `📅 *Randevu Talebi*\n\n👤 *Ad Soyad:* ${name}\n📞 *Telefon:* ${phone}\n🗓 *Tarih:* ${date}\n\n📍 Areteus Sağlık\n☎️ +90 533 220 20 10`
     );
+
+    window.open(`https://wa.me/905332202010?text=${message}`, "_blank");
   };
+
+  const menuItems = [
+    "Akademik Eğitim",
+    "Akademik Görevler",
+    "Ödüller",
+    "Yayınlar",
+    "Uzmanlık Alanları",
+    "İletişim",
+  ];
 
   return (
-    <main className="font-sans">
+    <main>
+      <style>{`
+        * {
+          box-sizing: border-box;
+        }
 
-      {/* SLIDER */}
-      <section className="relative h-screen">
-        {slides.map((img, i) => (
+        body {
+          margin: 0;
+          font-family: Arial, Helvetica, sans-serif;
+          background: #f5f8fa;
+          color: #102a43;
+        }
+
+        .hero {
+          position: relative;
+          width: 100%;
+          height: 82vh;
+          overflow: hidden;
+          background: #dde8ec;
+        }
+
+        .slide {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          opacity: 0;
+          transition: opacity 1200ms ease-in-out;
+        }
+
+        .slide.active {
+          opacity: 1;
+        }
+
+        .heroOverlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+            to bottom,
+            rgba(0,0,0,0.08),
+            rgba(0,0,0,0.28)
+          );
+        }
+
+        .dots {
+          position: absolute;
+          bottom: 22px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 8px;
+        }
+
+        .dot {
+          width: 9px;
+          height: 9px;
+          border-radius: 99px;
+          background: rgba(255,255,255,0.65);
+        }
+
+        .dot.active {
+          width: 30px;
+          background: #00a8b8;
+        }
+
+        .intro {
+          text-align: center;
+          padding: 48px 22px 26px;
+        }
+
+        .intro small {
+          color: #008fa3;
+          font-weight: 800;
+          letter-spacing: 3px;
+          text-transform: uppercase;
+        }
+
+        .intro h1 {
+          margin: 14px 0 10px;
+          font-size: clamp(34px, 6vw, 58px);
+          line-height: 1.08;
+        }
+
+        .intro p {
+          max-width: 780px;
+          margin: 0 auto;
+          color: #5b6b7a;
+          font-size: 18px;
+          line-height: 1.6;
+        }
+
+        .menu {
+          max-width: 1050px;
+          margin: 30px auto 20px;
+          padding: 0 22px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 12px;
+          justify-content: center;
+        }
+
+        .menu button {
+          width: auto;
+          padding: 13px 20px;
+          border-radius: 999px;
+          border: 1px solid #d7e4ea;
+          background: rgba(255,255,255,0.95);
+          color: #123047;
+          font-size: 15px;
+          font-weight: 700;
+          box-shadow: 0 8px 22px rgba(16,42,67,0.06);
+          cursor: pointer;
+        }
+
+        .section {
+          max-width: 1050px;
+          margin: 42px auto;
+          padding: 0 22px;
+        }
+
+        .box {
+          background: white;
+          border-radius: 28px;
+          padding: 34px;
+          box-shadow: 0 18px 45px rgba(16,42,67,0.09);
+        }
+
+        .box h2 {
+          margin-top: 0;
+          font-size: 30px;
+        }
+
+        .form label {
+          display: block;
+          margin: 16px 0 8px;
+          font-weight: 800;
+        }
+
+        input {
+          width: 100%;
+          padding: 16px;
+          border-radius: 14px;
+          border: 1px solid #d9e2ec;
+          font-size: 16px;
+        }
+
+        .whatsappButton {
+          margin-top: 20px;
+          width: 100%;
+          padding: 17px;
+          border: none;
+          border-radius: 14px;
+          background: #00a8b8;
+          color: white;
+          font-size: 17px;
+          font-weight: 800;
+          cursor: pointer;
+        }
+
+        .video {
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          border: 0;
+          border-radius: 22px;
+          overflow: hidden;
+        }
+
+        .contactText {
+          color: #5b6b7a;
+          line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+          .hero {
+            height: 46vh;
+          }
+
+          .slide {
+            object-fit: cover;
+          }
+
+          .menu {
+            justify-content: flex-start;
+            overflow-x: auto;
+            flex-wrap: nowrap;
+            padding-bottom: 8px;
+          }
+
+          .menu button {
+            white-space: nowrap;
+          }
+
+          .box {
+            padding: 24px;
+            border-radius: 22px;
+          }
+        }
+      `}</style>
+
+      <section className="hero">
+        {slides.map((src, index) => (
           <img
-            key={i}
-            src={img}
-            className={`absolute w-full h-full object-cover transition-opacity duration-1000 ${
-              i === current ? "opacity-100" : "opacity-0"
-            }`}
+            key={src}
+            src={src}
+            alt="Areteus Sağlık"
+            className={`slide ${index === current ? "active" : ""}`}
           />
         ))}
 
-        {/* overlay */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="heroOverlay" />
 
-        {/* text */}
-        <div className="absolute bottom-20 left-10 text-white">
-          <h1 className="text-5xl font-bold">Areteus Sağlık</h1>
-          <p className="mt-2 text-xl">Prof. Dr. M. Temel Yılmaz</p>
-
-          <button
-            onClick={() =>
-              document.getElementById("randevu")?.scrollIntoView()
-            }
-            className="mt-6 bg-cyan-600 px-6 py-3 rounded-xl"
-          >
-            Randevu Al
-          </button>
+        <div className="dots">
+          {slides.map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${index === current ? "active" : ""}`}
+            />
+          ))}
         </div>
       </section>
 
-      {/* MENÜ (PRO) */}
-      <section className="p-8 grid md:grid-cols-3 gap-6 bg-gray-100">
+      <section className="intro">
+        <small>Areteus Sağlık</small>
+        <h1>Prof. Dr. Mehmet Temel Yılmaz</h1>
+        <p>
+          İç Hastalıkları, Endokrinoloji, Diyabet ve Metabolizma Hastalıkları
+          alanında akademik ve klinik deneyim.
+        </p>
+      </section>
 
-        {[
-          { title: "Akademik Eğitim", icon: "🎓" },
-          { title: "Akademik Görevler", icon: "🩺" },
-          { title: "Ödüller", icon: "🏅" },
-          { title: "Yayınlar", icon: "📚" },
-          { title: "Uzmanlık Alanları", icon: "💉" },
-          { title: "İletişim", icon: "📍" },
-        ].map((item, i) => (
-          <div
-            key={i}
-            className="bg-white p-6 rounded-2xl shadow hover:shadow-xl transition"
-          >
-            <div className="text-3xl">{item.icon}</div>
-            <h3 className="mt-3 text-lg font-semibold">{item.title}</h3>
-          </div>
+      <section className="menu">
+        {menuItems.map((item) => (
+          <button key={item}>{item}</button>
         ))}
       </section>
 
-      {/* RANDEVU */}
-      <section id="randevu" className="p-10 bg-white max-w-xl mx-auto">
+      <section className="section">
+        <div className="box">
+          <h2>Randevu Talebi</h2>
 
-        <h2 className="text-2xl font-bold mb-6">Randevu Talebi</h2>
-
-        <input
-          placeholder="Ad Soyad"
-          className="w-full p-3 mb-3 border rounded"
-          onChange={(e) =>
-            setForm({ ...form, name: e.target.value })
-          }
-        />
-
-        <input
-          placeholder="0(5xx) xxx xx xx"
-          className="w-full p-3 mb-3 border rounded"
-          value={form.phone}
-          onChange={(e) =>
-            setForm({
-              ...form,
-              phone: formatPhone(e.target.value),
-            })
-          }
-        />
-
-        <input
-          type="date"
-          className="w-full p-3 mb-4 border rounded"
-          min={new Date().toISOString().split("T")[0]}
-          onChange={(e) =>
-            setForm({ ...form, date: e.target.value })
-          }
-        />
-
-        <button
-          onClick={sendWhatsApp}
-          className="w-full bg-green-600 text-white p-3 rounded"
-        >
-          WhatsApp ile Gönder
-        </button>
-      </section>
-
-      {/* BASINDA BİZ */}
-      <section className="p-10 bg-gray-100">
-
-        <h2 className="text-2xl font-bold mb-6">Basında Biz</h2>
-
-        <div className="grid md:grid-cols-2 gap-6">
-
-          {/* video */}
-          <div className="bg-white p-4 rounded-xl shadow">
-            <h3 className="mb-2 font-semibold">
-              İnsülinin keşfi kadar büyük başarı
-            </h3>
-
-            <iframe
-              className="w-full aspect-video rounded"
-              src="https://www.youtube.com/embed/Jx0Ew7GvLdw"
-              allowFullScreen
+          <div className="form">
+            <label>👤 Ad Soyad</label>
+            <input
+              placeholder="Ad Soyad"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
             />
-          </div>
 
-          {/* haber */}
-          <div className="bg-white p-4 rounded-xl shadow">
-            <h3 className="mb-2 font-semibold">
-              4. doz aşı açıklaması
-            </h3>
-
-            <iframe
-              className="w-full h-[400px] rounded"
-              src="https://t24.com.tr/koronavirus/prof-dr-temel-yilmaz-dorduncu-doz-asiya-ihtiyac-oldugunu-gosteren-bir-calisma-yok,972604"
+            <label>📞 Cep Telefonu</label>
+            <input
+              placeholder="0(5xx) xxx xx xx"
+              value={phone}
+              onChange={(e) => setPhone(formatPhone(e.target.value))}
             />
+
+            <label>🗓 Randevu Tarihi</label>
+            <input
+              type="date"
+              min={today}
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+
+            <button className="whatsappButton" onClick={sendWhatsapp}>
+              WhatsApp ile Randevu Talebi Gönder
+            </button>
           </div>
         </div>
       </section>
 
+      <section className="section">
+        <div className="box">
+          <h2>Basında Biz</h2>
+          <h3>Prof. Dr. Temel Yılmaz: İnsülinin keşfi kadar büyük bir başarı</h3>
+
+          <iframe
+            className="video"
+            src="https://www.youtube.com/embed/Jx0Ew7GvLdw"
+            title="Prof. Dr. Temel Yılmaz"
+            allowFullScreen
+          />
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="box">
+          <h2>İletişim</h2>
+          <p className="contactText">
+            <strong>Adres:</strong> Teşvikiye, Hakkı Yeten Cd. No:17, 34365
+            Şişli/İstanbul Aşçıoğlu Plaza Kat:7
+            <br />
+            <strong>WhatsApp:</strong> +90 533 220 20 10
+          </p>
+        </div>
+      </section>
     </main>
   );
 }
