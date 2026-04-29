@@ -121,7 +121,24 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#f7f8fb] text-slate-900">
       <section className="relative min-h-[78vh] overflow-hidden bg-slate-950 text-white">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=1600')] bg-cover bg-center opacity-35" />
+        <div className="absolute inset-0 <section className="relative min-h-[90vh] text-white">
+  <div className="absolute inset-0">
+    <img
+      src="/hero.jpg"
+      alt="Areteus Sağlık"
+      className="w-full h-full object-cover"
+    />
+  </div>
+
+  <div className="absolute inset-0 bg-black/40" />
+
+  <div className="relative z-10 flex items-center justify-center min-h-[90vh] text-center px-6">
+    <div>
+      <p className="text-sm tracking-widest mb-4">Areteus Sağlık</p>
+      <h1 className="text-5xl font-bold">Prof. Dr. Mehmet Temel Yılmaz</h1>
+    </div>
+  </div>
+</section> bg-cover bg-center opacity-35" />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/40" />
 
         <div className="relative mx-auto flex min-h-[78vh] max-w-7xl flex-col justify-center px-6 py-20">
