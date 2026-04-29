@@ -5,49 +5,34 @@ import { useState } from "react";
 export default function Home() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [note, setNote] = useState("");
+  const [date, setDate] = useState("");
 
   const whatsappNumber = "905332202010";
 
+  const formatPhone = (value: string) => {
+    const numbers = value.replace(/\D/g, "").slice(0, 11);
+    if (numbers.length <= 1) return numbers;
+    if (numbers.length <= 4) return `${numbers[0]}(${numbers.slice(1)}`;
+    if (numbers.length <= 7) return `${numbers[0]}(${numbers.slice(1, 4)}) ${numbers.slice(4)}`;
+    if (numbers.length <= 9) return `${numbers[0]}(${numbers.slice(1, 4)}) ${numbers.slice(4, 7)} ${numbers.slice(7)}`;
+    return `${numbers[0]}(${numbers.slice(1, 4)}) ${numbers.slice(4, 7)} ${numbers.slice(7, 9)} ${numbers.slice(9)}`;
+  };
+
   const sendWhatsapp = () => {
     const message = encodeURIComponent(
-      `Merhaba, randevu talebi oluşturmak istiyorum.\n\nAd Soyad: ${name}\nTelefon: ${phone}\nNot: ${note}`
+      `Merhaba, randevu talebi oluşturmak istiyorum.\n\nAd Soyad: ${name}\nCep Telefonu: ${phone}\nRandevu Tarihi: ${date}\n\nİletişim: +90 533 220 20 10`
     );
 
     window.open(`https://wa.me/${whatsappNumber}?text=${message}`, "_blank");
   };
 
-  const cards = [
-    "Akademik Eğitim",
-    "Akademik Görevler",
-    "Ödüller",
-    "Yayınlar",
-    "Uzmanlık Alanları",
-    "İletişim",
-  ];
-
   return (
-    <main className="site">
+    <main style={{ margin: 0, fontFamily: "Arial, sans-serif", background: "#f6f8fb", color: "#102a43" }}>
       <style>{`
         * { box-sizing: border-box; }
         body { margin: 0; }
 
-        .site {
-          font-family: Arial, sans-serif;
-          background: #f6f8fb;
-          color: #102a43;
-        }
-
-        .hero {
-          width: 100%;
-          background: #eef3f5;
-        }
-
-        .hero img {
-          width: 100%;
-          height: auto;
-          display: block;
-        }
+        .hero img { width: 100%; height: auto; display: block; }
 
         .intro {
           padding: 44px 22px 20px;
@@ -64,7 +49,6 @@ export default function Home() {
         .intro h1 {
           margin: 14px 0 10px;
           font-size: clamp(34px, 6vw, 58px);
-          line-height: 1.05;
         }
 
         .intro p {
@@ -75,61 +59,30 @@ export default function Home() {
           line-height: 1.6;
         }
 
-        .cards {
-          max-width: 1120px;
-          margin: 35px auto;
+        .section {
+          max-width: 1050px;
+          margin: 45px auto;
           padding: 0 22px;
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 18px;
         }
 
-        .card {
-          background: white;
-          border: 1px solid #e6edf2;
-          border-radius: 22px;
-          padding: 26px;
-          min-height: 130px;
-          box-shadow: 0 14px 35px rgba(16,42,67,.07);
-        }
-
-        .card span {
-          font-size: 28px;
-        }
-
-        .card h3 {
-          margin: 16px 0 0;
-          font-size: 21px;
-        }
-
-        .appointment {
-          max-width: 900px;
-          margin: 50px auto 80px;
-          padding: 34px;
+        .box {
           background: white;
           border-radius: 28px;
+          padding: 34px;
           box-shadow: 0 18px 45px rgba(16,42,67,.09);
         }
 
-        .appointment h2 {
-          margin-top: 0;
-          font-size: 32px;
-        }
-
-        .form {
-          display: grid;
-          gap: 14px;
-        }
-
-        input, textarea {
+        input {
           width: 100%;
           padding: 16px;
           border-radius: 14px;
           border: 1px solid #d9e2ec;
           font-size: 16px;
+          margin-bottom: 14px;
         }
 
         button {
+          width: 100%;
           padding: 17px;
           border: none;
           border-radius: 14px;
@@ -140,27 +93,28 @@ export default function Home() {
           cursor: pointer;
         }
 
-        .contact {
-          margin-top: 18px;
-          color: #5b6b7a;
-          line-height: 1.7;
+        .video {
+          width: 100%;
+          aspect-ratio: 16 / 9;
+          border: 0;
+          border-radius: 22px;
+          overflow: hidden;
         }
 
+        .news-frame {
+          width: 100%;
+          height: 620px;
+          border: 1px solid #d9e2ec;
+          border-radius: 22px;
+          background: white;
+        }
+
+        h2 { font-size: 32px; margin-top: 0; }
+        h3 { font-size: 24px; }
+
         @media (max-width: 768px) {
-          .cards {
-            grid-template-columns: 1fr;
-          }
-
-          .card {
-            min-height: auto;
-            padding: 22px;
-            border-radius: 18px;
-          }
-
-          .appointment {
-            margin: 30px 18px 60px;
-            padding: 24px;
-          }
+          .box { padding: 24px; border-radius: 22px; }
+          .news-frame { height: 520px; }
         }
       `}</style>
 
@@ -172,24 +126,15 @@ export default function Home() {
         <small>Areteus Sağlık</small>
         <h1>Prof. Dr. Mehmet Temel Yılmaz</h1>
         <p>
-          İç Hastalıkları, Endokrinoloji, Diyabet ve Metabolizma Hastalıkları
-          alanında akademik ve klinik deneyim.
+          İç Hastalıkları, Endokrinoloji, Diyabet ve Metabolizma Hastalıkları alanında
+          akademik ve klinik deneyim.
         </p>
       </section>
 
-      <section className="cards">
-        {cards.map((item, i) => (
-          <div className="card" key={item}>
-            <span>{["🩺", "🎓", "🏅", "📚", "💉", "📍"][i]}</span>
-            <h3>{item}</h3>
-          </div>
-        ))}
-      </section>
+      <section className="section" id="randevu">
+        <div className="box">
+          <h2>Randevu Talebi</h2>
 
-      <section className="appointment">
-        <h2>Randevu Talebi</h2>
-
-        <div className="form">
           <input
             placeholder="Ad Soyad"
             value={name}
@@ -197,28 +142,49 @@ export default function Home() {
           />
 
           <input
-            placeholder="Telefon Numaranız"
+            placeholder="Cep 0(xxx) xxx xx xx"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => setPhone(formatPhone(e.target.value))}
           />
 
-          <textarea
-            placeholder="Randevu notunuz"
-            rows={4}
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
           />
 
           <button onClick={sendWhatsapp}>
             WhatsApp ile Randevu Talebi Gönder
           </button>
         </div>
+      </section>
 
-        <div className="contact">
-          <strong>Adres:</strong> Teşvikiye, Hakkı Yeten Cd. No:17, 34365
-          Şişli/İstanbul Aşçıoğlu Plaza Kat:7
-          <br />
-          <strong>WhatsApp:</strong> +90 533 220 20 10
+      <section className="section">
+        <div className="box">
+          <h2>Basında Biz</h2>
+          <h3>Prof. Dr. Temel Yılmaz: İnsülinin keşfi kadar büyük bir başarı</h3>
+
+          <iframe
+            className="video"
+            src="https://www.youtube.com/embed/Jx0Ew7GvLdw"
+            title="Prof. Dr. Temel Yılmaz"
+            allowFullScreen
+          />
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="box">
+          <h2>Haber</h2>
+          <h3>
+            Prof. Dr. Temel Yılmaz: Dördüncü doz aşıya ihtiyaç olduğunu gösteren bir çalışma yok
+          </h3>
+
+          <iframe
+            className="news-frame"
+            src="https://t24.com.tr/koronavirus/prof-dr-temel-yilmaz-dorduncu-doz-asiya-ihtiyac-oldugunu-gosteren-bir-calisma-yok,972604"
+            title="T24 Haber"
+          />
         </div>
       </section>
     </main>
