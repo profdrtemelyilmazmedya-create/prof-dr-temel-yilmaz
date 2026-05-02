@@ -133,9 +133,17 @@ const sections = [
 export default function Home() {
   const [current, setCurrent] = useState(0);
   const [open, setOpen] = useState<string | null>("Akademik Eğitim ve Unvanlar");
+
+  const [appointmentType, setAppointmentType] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [age, setAge] = useState("");
   const [date, setDate] = useState("");
+  const [meetingPreference, setMeetingPreference] = useState("WhatsApp");
+  const [note, setNote] = useState("");
+  const [labFileName, setLabFileName] = useState("");
+  const [kvkkApproved, setKvkkApproved] = useState(false);
 
   const today = new Date().toISOString().split("T")[0];
   const mapUrl = "https://maps.app.goo.gl/qWSuSpkmcg8MjFov8";
@@ -165,14 +173,32 @@ export default function Home() {
   };
 
   const sendWhatsapp = () => {
+    if (!appointmentType || !name || !phone || !email || !age || !date) {
+      alert("Lütfen zorunlu alanları doldurunuz.");
+      return;
+    }
+
+    if (!kvkkApproved) {
+      alert("Lütfen KVKK / kişisel sağlık verisi onayını işaretleyiniz.");
+      return;
+    }
+
     const msg = encodeURIComponent(
-      `📅 *Randevu Talebi*\n\n` +
+      `📅 *Yeni Randevu Talebi*\n\n` +
+      `🏥 *Randevu Tipi:* ${appointmentType}\n` +
       `👤 *Ad Soyad:* ${name}\n` +
       `📞 *Telefon:* ${phone}\n` +
-      `🗓 *Tarih:* ${formatDateTR(date)}\n\n` +
+      `📧 *E-posta:* ${email}\n` +
+      `🎂 *Yaş:* ${age}\n` +
+      `🗓 *Randevu Tarihi:* ${formatDateTR(date)}\n` +
+      `💬 *Görüşme Tercihi:* ${meetingPreference}\n\n` +
+      `📝 *Not:* ${note || "Belirtilmedi"}\n\n` +
+      `📎 *Laboratuvar Sonucu Yüklendi:* ${labFileName ? "Evet" : "Hayır"}\n` +
+      `📄 *Dosya Adı:* ${labFileName || "Dosya seçilmedi"}\n\n` +
       `📍 *Konum:* ${mapUrl}\n` +
       `☎️ *İletişim:* +90 533 220 20 10`
     );
+
     window.open(`https://wa.me/905332202010?text=${msg}`, "_blank");
   };
 
@@ -376,13 +402,87 @@ export default function Home() {
           padding: 0 22px;
         }
 
+        .appointmentTitle {
+          text-align: center;
+          margin-bottom: 24px;
+        }
+
+        .appointmentTitle h2 {
+          margin-bottom: 8px;
+        }
+
+        .appointmentTitle p {
+          margin: 0;
+          color: #64748b;
+          font-size: 16px;
+        }
+
+        .appointmentCards {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+          margin: 24px 0 28px;
+        }
+
+        .appointmentCard {
+          border: 1px solid #dce8ee;
+          background: linear-gradient(180deg, #ffffff, #f7fcfd);
+          border-radius: 24px;
+          padding: 24px;
+          cursor: pointer;
+          text-align: left;
+          box-shadow: 0 14px 32px rgba(16,42,67,.07);
+          transition: .25s ease;
+        }
+
+        .appointmentCard:hover {
+          transform: translateY(-3px);
+          border-color: #00a8b8;
+        }
+
+        .appointmentCard.selected {
+          border-color: #00a8b8;
+          box-shadow: 0 20px 46px rgba(0,168,184,.2);
+          background: linear-gradient(135deg, #eafffd, #ffffff);
+        }
+
+        .appointmentIcon {
+          width: 54px;
+          height: 54px;
+          border-radius: 18px;
+          background: #e8fbfd;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 28px;
+          margin-bottom: 14px;
+        }
+
+        .appointmentCard h3 {
+          margin: 0 0 8px;
+          font-size: 22px;
+          color: #102a43;
+        }
+
+        .appointmentCard p {
+          margin: 0;
+          color: #5b6b7a;
+          line-height: 1.6;
+        }
+
+        .formGrid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+        }
+
         .form label {
           display: block;
           margin: 16px 0 8px;
           font-weight: 900;
         }
 
-        input {
+        input, select, textarea {
           width: 100%;
           padding: 17px;
           border-radius: 16px;
@@ -390,11 +490,56 @@ export default function Home() {
           font-size: 16px;
           outline: none;
           background: #fbfdfe;
+          font-family: inherit;
         }
 
-        input:focus {
+        textarea {
+          min-height: 120px;
+          resize: vertical;
+        }
+
+        input:focus, select:focus, textarea:focus {
           border-color: #00a8b8;
           box-shadow: 0 0 0 4px rgba(0,168,184,.1);
+        }
+
+        .full {
+          grid-column: 1 / -1;
+        }
+
+        .fileBox {
+          border: 1px dashed #00a8b8;
+          background: #f2fdff;
+          border-radius: 18px;
+          padding: 18px;
+        }
+
+        .fileName {
+          margin-top: 10px;
+          color: #008fa3;
+          font-weight: 800;
+          font-size: 14px;
+        }
+
+        .kvkk {
+          display: flex;
+          gap: 12px;
+          align-items: flex-start;
+          margin-top: 18px;
+          padding: 16px;
+          border-radius: 18px;
+          background: #f8fbfc;
+          border: 1px solid #e4edf2;
+          color: #415466;
+          line-height: 1.55;
+          font-size: 14px;
+        }
+
+        .kvkk input {
+          width: 18px;
+          min-width: 18px;
+          height: 18px;
+          margin-top: 2px;
         }
 
         .primaryBtn, .mapBtn, .callBtn {
@@ -479,6 +624,11 @@ export default function Home() {
             font-size: 16px;
             line-height: 1.85;
           }
+
+          .appointmentCards,
+          .formGrid {
+            grid-template-columns: 1fr;
+          }
         }
       `}</style>
 
@@ -542,20 +692,106 @@ export default function Home() {
 
       <section className="section" id="randevu">
         <div className="box">
-          <h2>Randevu Talebi</h2>
-
-          <div className="form">
-            <label>👤 Ad Soyad</label>
-            <input placeholder="Ad Soyad" value={name} onChange={(e) => setName(e.target.value)} />
-
-            <label>📞 Cep Telefonu</label>
-            <input placeholder="0(5xx) xxx xx xx" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} />
-
-            <label>🗓 Randevu Tarihi</label>
-            <input type="date" min={today} value={date} onChange={(e) => setDate(e.target.value)} />
-
-            <button className="primaryBtn" onClick={sendWhatsapp}>WhatsApp ile Randevu Talebi Gönder</button>
+          <div className="appointmentTitle">
+            <h2>Randevu Tipini Seçiniz</h2>
+            <p>Online görüşme veya klinik randevusu için aşağıdan seçim yapınız.</p>
           </div>
+
+          <div className="appointmentCards">
+            <button
+              type="button"
+              className={`appointmentCard ${appointmentType === "Online Randevu" ? "selected" : ""}`}
+              onClick={() => setAppointmentType("Online Randevu")}
+            >
+              <div className="appointmentIcon">💻</div>
+              <h3>Online Randevu</h3>
+              <p>WhatsApp, Zoom veya Apple FaceTime ile görüntülü görüşme talebi oluşturun.</p>
+            </button>
+
+            <button
+              type="button"
+              className={`appointmentCard ${appointmentType === "Klinik Randevu" ? "selected" : ""}`}
+              onClick={() => setAppointmentType("Klinik Randevu")}
+            >
+              <div className="appointmentIcon">🏥</div>
+              <h3>Klinik Randevu</h3>
+              <p>Kliniğimizde yüz yüze muayene için randevu talebi oluşturun.</p>
+            </button>
+          </div>
+
+          {appointmentType && (
+            <div className="form">
+              <div className="formGrid">
+                <div>
+                  <label>👤 Ad Soyad *</label>
+                  <input placeholder="Ad Soyad" value={name} onChange={(e) => setName(e.target.value)} />
+                </div>
+
+                <div>
+                  <label>📞 Cep Telefonu *</label>
+                  <input placeholder="0(5xx) xxx xx xx" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} />
+                </div>
+
+                <div>
+                  <label>📧 E-posta *</label>
+                  <input type="email" placeholder="ornek@mail.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+
+                <div>
+                  <label>🎂 Yaş *</label>
+                  <input type="number" placeholder="Yaş" value={age} onChange={(e) => setAge(e.target.value)} />
+                </div>
+
+                <div>
+                  <label>🗓 Randevu Tarihi *</label>
+                  <input type="date" min={today} value={date} onChange={(e) => setDate(e.target.value)} />
+                </div>
+
+                <div>
+                  <label>💬 Görüşme Tercihi</label>
+                  <select value={meetingPreference} onChange={(e) => setMeetingPreference(e.target.value)}>
+                    <option>WhatsApp</option>
+                    <option>Zoom</option>
+                    <option>Apple FaceTime</option>
+                    <option>Telefon</option>
+                  </select>
+                </div>
+
+                <div className="full">
+                  <label>📝 Kısa Not</label>
+                  <textarea placeholder="Kısa açıklama / not yazınız" value={note} onChange={(e) => setNote(e.target.value)} />
+                </div>
+
+                <div className="full">
+                  <label>📎 Son 6 Aylık Laboratuvar Test Sonuçları</label>
+                  <div className="fileBox">
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={(e) => setLabFileName(e.target.files?.[0]?.name || "")}
+                    />
+                    {labFileName && <div className="fileName">Seçilen dosya: {labFileName}</div>}
+                  </div>
+                </div>
+              </div>
+
+              <label className="kvkk">
+                <input
+                  type="checkbox"
+                  checked={kvkkApproved}
+                  onChange={(e) => setKvkkApproved(e.target.checked)}
+                />
+                <span>
+                  Kişisel verilerimin ve sağlık bilgilerimin randevu değerlendirmesi amacıyla
+                  işlenmesini ve tarafımla iletişime geçilmesini kabul ediyorum.
+                </span>
+              </label>
+
+              <button className="primaryBtn" onClick={sendWhatsapp}>
+                WhatsApp ile Randevu Talebi Gönder
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
