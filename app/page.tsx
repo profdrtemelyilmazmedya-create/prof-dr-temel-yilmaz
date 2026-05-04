@@ -35,10 +35,11 @@ export default function Page() {
     setForm({ ...form, [name]: value });
 
     if(name === "country"){
-      const f = countries.filter(c =>
-        c.toLowerCase().includes(value.toLowerCase())
+      setFiltered(
+        countries.filter(c =>
+          c.toLowerCase().includes(value.toLowerCase())
+        )
       );
-      setFiltered(f);
     }
   };
 
@@ -66,10 +67,17 @@ export default function Page() {
   const sendWhatsApp = async () => {
     const fileUrl = await uploadFile();
 
+    await supabase.from("appointments").insert([
+      {
+        ...form,
+        file_url: fileUrl,
+      },
+    ]);
+
     const phone = "905XXXXXXXXX";
 
     const text = `
-Randevu Talebi
+RANDEVU
 
 Tür: ${form.type}
 Ad: ${form.name}
@@ -82,23 +90,34 @@ Not: ${form.note}
 Dosya: ${fileUrl || "Yok"}
 `;
 
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
-    window.open(url, "_blank");
+    window.open(
+      `https://wa.me/${phone}?text=${encodeURIComponent(text)}`,
+      "_blank"
+    );
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex justify-center items-center">
-      <div className="w-full max-w-xl bg-white text-black p-6 rounded-2xl shadow-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-black to-gray-900 flex items-center justify-center text-white">
+      <div className="bg-white text-black p-6 rounded-2xl w-full max-w-lg shadow-2xl">
 
         <h1 className="text-3xl font-bold mb-6 text-center">Randevu</h1>
 
         <div className="flex gap-2 mb-4">
-          <button onClick={()=>setForm({...form,type:"Online"})}
-            className={`px-4 py-2 rounded ${form.type==="Online"?"bg-black text-white":"border"}`}>
+          <button
+            onClick={() => setForm({ ...form, type: "Online" })}
+            className={`px-4 py-2 rounded ${
+              form.type === "Online" ? "bg-black text-white" : "border"
+            }`}
+          >
             Online
           </button>
-          <button onClick={()=>setForm({...form,type:"Klinik"})}
-            className={`px-4 py-2 rounded ${form.type==="Klinik"?"bg-black text-white":"border"}`}>
+
+          <button
+            onClick={() => setForm({ ...form, type: "Klinik" })}
+            className={`px-4 py-2 rounded ${
+              form.type === "Klinik" ? "bg-black text-white" : "border"
+            }`}
+          >
             Klinik
           </button>
         </div>
@@ -108,7 +127,7 @@ Dosya: ${fileUrl || "Yok"}
           className="w-full p-2 border mb-1" />
 
         {form.country && (
-          <div className="bg-white border max-h-32 overflow-auto mb-2">
+          <div className="border max-h-32 overflow-auto mb-2">
             {filtered.map((c,i)=>(
               <div key={i}
                 onClick={()=>setForm({...form,country:c})}
