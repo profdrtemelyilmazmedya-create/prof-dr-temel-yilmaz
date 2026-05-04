@@ -1,3 +1,5 @@
+import "./globals.css";
+
 export const metadata = {
   title: "Prof. Dr. M. Temel Yılmaz",
   description: "Areteus Sağlık",
@@ -10,7 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr">
-      <body style={{ margin: 0 }}>{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
