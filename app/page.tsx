@@ -1,155 +1,159 @@
 "use client";
 
 import { useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = "https://tqgommhknafkikshzqgd.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Ui5QUNbwt-e3frr1VUxjew_NA6bbBXF";
-const WHATSAPP_PHONE = "905332202010";
+const supabase = createClient(
+  "https://tqgommhknafkikshzqgd.supabase.co",
+  "sb_publishable_Ui5QUNbwt-e3frr1VUxjew_NA6bbBXF"
+);
 
-export default function Home() {
-  const [type, setType] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [age, setAge] = useState("");
-  const [note, setNote] = useState("");
+const countries = [
+  "Türkiye","Almanya","Fransa","İtalya","İspanya","İngiltere","ABD","Kanada",
+  "Hollanda","Belçika","İsviçre","Avusturya","İsveç","Norveç","Danimarka",
+  "Rusya","Japonya","Çin","Hindistan","Brezilya","Arjantin","Meksika",
+  "Avustralya","Yeni Zelanda"
+];
+
+export default function Page() {
+  const [form, setForm] = useState({
+    type: "Online",
+    country: "",
+    city: "",
+    name: "",
+    phone: "",
+    email: "",
+    age: "",
+    note: "",
+  });
+
   const [file, setFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [filtered, setFiltered] = useState<string[]>(countries);
 
-  const uploadFile = async (file: File) => {
-    const fileName = Date.now() + "-" + file.name;
+  const handleChange = (e:any) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
 
-    const res = await fetch(
-      `${SUPABASE_URL}/storage/v1/object/lab-files/${fileName}`,
-      {
-        method: "POST",
-        headers: {
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`,
-        },
-        body: file,
-      }
-    );
-
-    if (!res.ok) throw new Error("Upload hatası");
-
-    return `${SUPABASE_URL}/storage/v1/object/public/lab-files/${fileName}`;
+    if(name === "country"){
+      const f = countries.filter(c =>
+        c.toLowerCase().includes(value.toLowerCase())
+      );
+      setFiltered(f);
+    }
   };
 
-  const send = async () => {
-    if (!type || !name || !phone) {
-      alert("Zorunlu alanları doldur");
-      return;
+  const uploadFile = async () => {
+    if (!file) return null;
+
+    const fileName = Date.now() + "-" + file.name;
+
+    const { error } = await supabase.storage
+      .from("lab-files")
+      .upload(fileName, file);
+
+    if (error) {
+      alert("Dosya yüklenemedi ❌");
+      return null;
     }
 
-    setLoading(true);
+    const { data } = supabase.storage
+      .from("lab-files")
+      .getPublicUrl(fileName);
 
-    let fileUrl = "";
+    return data.publicUrl;
+  };
 
-    try {
-      if (file) {
-        fileUrl = await uploadFile(file);
-      }
+  const sendWhatsApp = async () => {
+    const fileUrl = await uploadFile();
 
-      const message =
-        type === "online"
-          ? `ONLINE RANDEVU
+    const phone = "905XXXXXXXXX";
 
-Ülke: ${country}
-Şehir: ${city}
-Ad Soyad: ${name}
-Telefon: ${phone}
-E-posta: ${email}
-Yaş: ${age}
-Not: ${note}
+    const text = `
+Randevu Talebi
 
-Belge: ${fileUrl || "Yok"}`
-          : `KLİNİK RANDEVU
+Tür: ${form.type}
+Ad: ${form.name}
+Telefon: ${form.phone}
+Email: ${form.email}
+Yaş: ${form.age}
+Ülke: ${form.country}
+Şehir: ${form.city}
+Not: ${form.note}
+Dosya: ${fileUrl || "Yok"}
+`;
 
-Ad Soyad: ${name}
-Telefon: ${phone}
-E-posta: ${email}
-Yaş: ${age}
-Not: ${note}
-
-Belge: ${fileUrl || "Yok"}`;
-
-      window.open(
-        `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`
-      );
-    } catch (e) {
-      alert("Hata oluştu");
-    }
-
-    setLoading(false);
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+    window.open(url, "_blank");
   };
 
   return (
-    <main style={{ padding: 40 }}>
-      <h1>Randevu</h1>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white flex justify-center items-center">
+      <div className="w-full max-w-xl bg-white text-black p-6 rounded-2xl shadow-2xl">
 
-      <button onClick={() => setType("online")}>Online</button>
-      <button onClick={() => setType("klinik")}>Klinik</button>
+        <h1 className="text-3xl font-bold mb-6 text-center">Randevu</h1>
 
-      {type && (
-        <>
-          {type === "online" && (
-            <>
-              <input
-                placeholder="Ülke"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-              />
-              <input
-                placeholder="Şehir"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-            </>
-          )}
-
-          <input
-            placeholder="Ad Soyad"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-
-          <input
-            placeholder="Telefon"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-
-          <input
-            placeholder="E-posta"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-
-          <input
-            placeholder="Yaş"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-          />
-
-          <textarea
-            placeholder="Not"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-          />
-
-          <input
-            type="file"
-            onChange={(e) => setFile(e.target.files?.[0] || null)}
-          />
-
-          <button onClick={send}>
-            {loading ? "Yükleniyor..." : "Gönder"}
+        <div className="flex gap-2 mb-4">
+          <button onClick={()=>setForm({...form,type:"Online"})}
+            className={`px-4 py-2 rounded ${form.type==="Online"?"bg-black text-white":"border"}`}>
+            Online
           </button>
-        </>
-      )}
-    </main>
+          <button onClick={()=>setForm({...form,type:"Klinik"})}
+            className={`px-4 py-2 rounded ${form.type==="Klinik"?"bg-black text-white":"border"}`}>
+            Klinik
+          </button>
+        </div>
+
+        <input name="country" placeholder="Ülke"
+          onChange={handleChange}
+          className="w-full p-2 border mb-1" />
+
+        {form.country && (
+          <div className="bg-white border max-h-32 overflow-auto mb-2">
+            {filtered.map((c,i)=>(
+              <div key={i}
+                onClick={()=>setForm({...form,country:c})}
+                className="p-2 hover:bg-gray-200 cursor-pointer">
+                {c}
+              </div>
+            ))}
+          </div>
+        )}
+
+        <input name="city" placeholder="Şehir"
+          onChange={handleChange}
+          className="w-full p-2 border mb-2" />
+
+        <input name="name" placeholder="Ad Soyad"
+          onChange={handleChange}
+          className="w-full p-2 border mb-2" />
+
+        <input name="phone" placeholder="Telefon"
+          onChange={handleChange}
+          className="w-full p-2 border mb-2" />
+
+        <input name="email" placeholder="E-posta"
+          onChange={handleChange}
+          className="w-full p-2 border mb-2" />
+
+        <input name="age" placeholder="Yaş"
+          onChange={handleChange}
+          className="w-full p-2 border mb-2" />
+
+        <textarea name="note" placeholder="Not"
+          onChange={handleChange}
+          className="w-full p-2 border mb-2" />
+
+        <input type="file"
+          onChange={(e:any)=>setFile(e.target.files[0])}
+          className="mb-3" />
+
+        <button
+          onClick={sendWhatsApp}
+          className="w-full bg-black text-white py-3 rounded-xl">
+          Gönder
+        </button>
+
+      </div>
+    </div>
   );
 }
