@@ -5,7 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   "https://tqgommhknafkikshzqgd.supabase.co",
-  "BURAYA_SB_KEY"
+  "sb_publishable_Ui5QUNbwt-e3frr1VUxjew_NA6bbBXF"
 );
 
 const countries = [
